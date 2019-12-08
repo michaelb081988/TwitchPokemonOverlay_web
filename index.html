@@ -7,54 +7,66 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+	<style>
+		img { max-width: 150px; }
+	</style>
     <title>Hello, world!</title>
   </head>
   <body>
-  
+  <div class="row">
+	<div class="col-6" style="text-align: center; background-image: url('Images/pokeball.png'); background-size: 150px 150px; background-repeat: no-repeat; background-position: center"><img id="pokeimage0" src="Images/810.png" /></div>
+	<div class="col-6" style="text-align: center; background-image: url('Images/pokeball.png'); background-size: 150px 150px; background-repeat: no-repeat; background-position: center;"><img id="pokeimage1" src="Images/810.png" /></div>
+	
+  </div>
+  <div class="row">
+	<div class="col-6" style="text-align: center;"><span id="pokename0">Pokemon1</span></div>
+	<div class="col-6" style="text-align: center;"><span id="pokename1">Pokemon2</span></div>
+  </div>
+  <div class="row">
+	<div class="col-6" style="text-align: center; background-image: url('Images/pokeball.png'); background-size: 150px 150px; background-repeat: no-repeat; background-position: center;"><img id="pokeimage2" src="Images/810.png" /></div>
+	<div class="col-6" style="text-align: center; background-image: url('Images/pokeball.png'); background-size: 150px 150px; background-repeat: no-repeat; background-position: center;"><img id="pokeimage3" src="Images/810.png" /></div>
+  </div>
+  <div class="row">
+	<div class="col-6" style="text-align: center;"><span id="pokename2">Pokemon3</span></div>
+	<div class="col-6" style="text-align: center;"><span id="pokename3">Pokemon4</span></div>
+  </div>
+  <div class="row">
+	<div class="col-6" style="text-align: center; background-image: url('Images/pokeball.png'); background-size: 150px 150px; background-repeat: no-repeat; background-position: center;"><img id="pokeimage4" src="Images/810.png" /></div>
+	<div class="col-6" style="text-align: center; background-image: url('Images/pokeball.png'); background-size: 150px 150px; background-repeat: no-repeat; background-position: center;"><img id="pokeimage5" src="Images/810.png" /></div>
+  </div>
+  <div class="row">
+	<div class="col-6" style="text-align: center;"><span id="pokename4">Pokemon5</span></div>
+	<div class="col-6" style="text-align: center;"><span id="pokename5">Pokemon6</span></div>
+  </div>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	<script>
-	$(document).ready(function () {
-    if ("WebSocket" in window) {
- 
-        console.log('WebSocket is supported by your browser.');
- 
-        var serviceUrl = 'ws://127.0.0.1:8181/';
-        var protocol = 'Chat-1.0';
-        var socket = new WebSocket(serviceUrl, protocol);
- 
-        socket.onopen = function () {
-            console.log('Connection Established!');
-        };
- 
-        socket.onclose = function () {
-            console.log('Connection Closed!');
-        };
- 
-        socket.onerror = function (error) {
-            console.log('Error Occured: ' + error);
-        };
- 
-        socket.onmessage = function (e) {
-            if (typeof e.data === "string") {
-                console.log('String message received: ' + e.data);
-            }
-            else if (e.data instanceof ArrayBuffer) {
-                console.log('ArrayBuffer received: ' + e.data);
-            }
-            else if (e.data instanceof Blob) {
-                console.log('Blob received: ' + e.data);
-            }
-        };
- 
-        socket.send("Hello WebSocket!");
-        socket.close();
-    }
-});
-</script>
+	function pokelist() {
+		var ws = new WebSocket('ws://localhost:8181');
+		ws.onopen = function() {
+			console.log('WebSocket Connected!');
+		};
+		
+		ws.onmessage = function(e) {
+			var data = JSON.parse(e.data);
+			updatepokemon(data);
+		};
+		
+		ws.onclose = function() {
+			console.log('WebSocket Disconnected! Retrying in 5 seconds.');
+			setTimeout(pokelist, 5000);
+		};
+	}
+	pokelist();
+	
+	function updatepokemon(poke) {
+		$("#pokename" + poke.ID).text(poke.Name);
+		$("#pokeimage" + poke.ID).attr("src", "Images/" + poke.Image);
+	}
+	</script>
   </body>
 </html>
